@@ -246,14 +246,14 @@ class SimpleSwitch(app_manager.RyuApp):
                 #                 datapath.ofproto_parser.OFPActionOutput(msg.in_port, 0)]
                 #     self.add_flow(datapath, match, actions)
                
-                #Send Packet
-                pkt.add_protocol(eth_pkt)
-                pkt.add_protocol(ipv4_pkt)
-                pkt.add_protocol(icmp_pkt)
-                pkt.serialize()
-                out = datapath.ofproto_parser.OFPPacketOut(datapath=datapath, buffer_id=ofproto.OFP_NO_BUFFER, in_port=datapath.ofproto.OFPP_CONTROLLER, actions=actions, data=pkt.data)
-                datapath.send_msg(out)
-                self.logger.info("STALTHIKE EPITELOUS packet in %s %s %s %s in_port=%s", hex(dpid), hex(ethertype), src, dst, msg.in_port)
+                    #Send Packet
+                    pkt.add_protocol(eth_pkt)
+                    pkt.add_protocol(ipv4_pkt)
+                    pkt.add_protocol(icmp_pkt)
+                    pkt.serialize()
+                    out = datapath.ofproto_parser.OFPPacketOut(datapath=datapath, buffer_id=ofproto.OFP_NO_BUFFER, in_port=datapath.ofproto.OFPP_CONTROLLER, actions=actions, data=pkt.data)
+                    datapath.send_msg(out)
+                    self.logger.info("STALTHIKE EPITELOUS packet in %s %s %s %s in_port=%s", hex(dpid), hex(ethertype), src, dst, msg.in_port)
                 
 
                 if '192.168.1' not in dst_Ip and '192.168.2' not in dst_Ip:
@@ -386,14 +386,14 @@ class SimpleSwitch(app_manager.RyuApp):
                 #                 datapath.ofproto_parser.OFPActionOutput(msg.in_port, 0)]
                 #     self.add_flow(datapath, match, actions)
                 
-                #Send IPv4 Packet
-                pkt.add_protocol(eth_pkt)
-                pkt.add_protocol(ipv4_pkt)
-                pkt.add_protocol(icmp_pkt)
-                pkt.serialize()
-                out = datapath.ofproto_parser.OFPPacketOut(datapath=datapath, buffer_id=ofproto.OFP_NO_BUFFER, in_port=datapath.ofproto.OFPP_CONTROLLER, actions=actions, data=pkt.data)
-                datapath.send_msg(out)
-                self.logger.info("STALTHIKE EPITELOUS packet in %s %s %s %s in_port=%s", hex(dpid), hex(ethertype), src, dst, msg.in_port)
+                    #Send IPv4 Packet
+                    pkt.add_protocol(eth_pkt)
+                    pkt.add_protocol(ipv4_pkt)
+                    pkt.add_protocol(icmp_pkt)
+                    pkt.serialize()
+                    out = datapath.ofproto_parser.OFPPacketOut(datapath=datapath, buffer_id=ofproto.OFP_NO_BUFFER, in_port=datapath.ofproto.OFPP_CONTROLLER, actions=actions, data=pkt.data)
+                    datapath.send_msg(out)
+                    self.logger.info("STALTHIKE EPITELOUS packet in %s %s %s %s in_port=%s", hex(dpid), hex(ethertype), src, dst, msg.in_port)
                 
                 if '192.168.1' not in dst_Ip and '192.168.2' not in dst_Ip:
                     eth_pkt = ethernet.ethernet(dst = eth.src, src = left_switch_router_mac, ethertype = eth.ethertype)
