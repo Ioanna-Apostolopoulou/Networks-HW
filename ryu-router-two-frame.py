@@ -233,18 +233,18 @@ class SimpleSwitch(app_manager.RyuApp):
                                 datapath.ofproto_parser.OFPActionSetDlDst(h4_mac),
                                 datapath.ofproto_parser.OFPActionOutput(out_port, 0)]
                         self.add_flow(datapath, match, actions)
-                #Unknown IP Destinations Detection
-                else:
-                    print('Destination Host Unreachable')
-                    eth_pkt = ethernet.ethernet(dst = eth.src, src = left_switch_router_mac, ethertype = eth.ethertype)
-                    ipv4_pkt = ipv4.ipv4(dst=src_Ip, src=left_switch_router_ip, proto=ip_pkt.proto)
-                    if ipv4_pkt.proto == inet.IPPROTO_ICMP:
-                        icmp_pkt = icmp.icmp(type_=icmp.ICMP_DEST_UNREACH, code=icmp.ICMP_HOST_UNREACH_CODE, csum=0, data=icmp.dest_unreach(data_len=len(pkt.data), data=pkt.data))
-                    match = datapath.ofproto_parser.OFPMatch(dl_type=ether_types.ETH_TYPE_IP,nw_src=left_switch_router_ip, nw_dst=src_Ip)
-                    actions = [datapath.ofproto_parser.OFPActionSetDlSrc(left_switch_router_mac),
-                                datapath.ofproto_parser.OFPActionSetDlDst(eth.src),
-                                datapath.ofproto_parser.OFPActionOutput(msg.in_port, 0)]
-                    self.add_flow(datapath, match, actions)
+                # #Unknown IP Destinations Detection
+                # else:
+                #     print('Destination Host Unreachable')
+                #     eth_pkt = ethernet.ethernet(dst = eth.src, src = left_switch_router_mac, ethertype = eth.ethertype)
+                #     ipv4_pkt = ipv4.ipv4(dst=src_Ip, src=left_switch_router_ip, proto=ip_pkt.proto)
+                #     if ipv4_pkt.proto == inet.IPPROTO_ICMP:
+                #         icmp_pkt = icmp.icmp(type_=icmp.ICMP_DEST_UNREACH, code=icmp.ICMP_HOST_UNREACH_CODE, csum=0, data=icmp.dest_unreach(data_len=len(pkt.data), data=pkt.data))
+                #     match = datapath.ofproto_parser.OFPMatch(dl_type=ether_types.ETH_TYPE_IP,nw_src=left_switch_router_ip, nw_dst=src_Ip)
+                #     actions = [datapath.ofproto_parser.OFPActionSetDlSrc(left_switch_router_mac),
+                #                 datapath.ofproto_parser.OFPActionSetDlDst(eth.src),
+                #                 datapath.ofproto_parser.OFPActionOutput(msg.in_port, 0)]
+                #     self.add_flow(datapath, match, actions)
                
                 #Send Packet
                 pkt.add_protocol(eth_pkt)
@@ -255,6 +255,18 @@ class SimpleSwitch(app_manager.RyuApp):
                 datapath.send_msg(out)
                 self.logger.info("STALTHIKE EPITELOUS packet in %s %s %s %s in_port=%s", hex(dpid), hex(ethertype), src, dst, msg.in_port)
                 
+
+                if '192.168.1' not in dst_Ip and '192.168.2' not in dst_Ip:
+                    eth_pkt = ethernet.ethernet(dst = eth.src, src = left_switch_router_mac, ethertype = eth.ethertype)
+                    ipv4_pkt = ipv4.ipv4(dst=src_Ip, src=left_switch_router_ip, proto=ip_pkt.proto)
+                    if ipv4_pkt.proto == inet.IPPROTO_ICMP:
+                        icmp_pkt = icmp.icmp(type_=icmp.ICMP_DEST_UNREACH, code=icmp.ICMP_HOST_UNREACH_CODE, csum=0, data=icmp.dest_unreach(data_len=len(pkt.data), data=pkt.data))
+                    pkt.add_protocol(eth_pkt)
+                    pkt.add_protocol(ipv4_pkt)
+                    pkt.add_protocol(icmp_pkt)
+                    pkt.serialize()
+                    out = datapath.ofproto_parser.OFPPacketOut(datapath=datapath, buffer_id=ofproto.OFP_NO_BUFFER, in_port=datapath.ofproto.OFPP_CONTROLLER, actions=actions, data=pkt.data)
+                    datapath.send_msg(out)
                 return 
             return
         #Right Router
@@ -361,18 +373,18 @@ class SimpleSwitch(app_manager.RyuApp):
                                 datapath.ofproto_parser.OFPActionSetDlDst(h4_mac),
                                 datapath.ofproto_parser.OFPActionOutput(out_port, 0)]
                         self.add_flow(datapath, match, actions)
-                #Unknown IP Destinations Detection
-                else:
-                    print('Destination Host Unreachable')
-                    eth_pkt = ethernet.ethernet(dst = eth.src, src = right_switch_router_mac, ethertype = eth.ethertype)
-                    ipv4_pkt = ipv4.ipv4(dst=src_Ip, src=right_switch_router_ip, proto=ip_pkt.proto)
-                    if ipv4_pkt.proto == inet.IPPROTO_ICMP:
-                        icmp_pkt = icmp.icmp(type_=icmp.ICMP_DEST_UNREACH, code=icmp.ICMP_HOST_UNREACH_CODE, csum=0, data=icmp.dest_unreach(data_len=len(pkt.data), data=pkt.data))
-                    match = datapath.ofproto_parser.OFPMatch(dl_type=ether_types.ETH_TYPE_IP,nw_src=src_Ip, nw_dst=dst_Ip)
-                    actions = [datapath.ofproto_parser.OFPActionSetDlSrc(right_switch_router_mac),
-                                datapath.ofproto_parser.OFPActionSetDlDst(eth.src),
-                                datapath.ofproto_parser.OFPActionOutput(msg.in_port, 0)]
-                    self.add_flow(datapath, match, actions)
+                # #Unknown IP Destinations Detection
+                # else:
+                #     print('Destination Host Unreachable')
+                #     eth_pkt = ethernet.ethernet(dst = eth.src, src = right_switch_router_mac, ethertype = eth.ethertype)
+                #     ipv4_pkt = ipv4.ipv4(dst=src_Ip, src=right_switch_router_ip, proto=ip_pkt.proto)
+                #     if ipv4_pkt.proto == inet.IPPROTO_ICMP:
+                #         icmp_pkt = icmp.icmp(type_=icmp.ICMP_DEST_UNREACH, code=icmp.ICMP_HOST_UNREACH_CODE, csum=0, data=icmp.dest_unreach(data_len=len(pkt.data), data=pkt.data))
+                #     match = datapath.ofproto_parser.OFPMatch(dl_type=ether_types.ETH_TYPE_IP,nw_src=src_Ip, nw_dst=dst_Ip)
+                #     actions = [datapath.ofproto_parser.OFPActionSetDlSrc(right_switch_router_mac),
+                #                 datapath.ofproto_parser.OFPActionSetDlDst(eth.src),
+                #                 datapath.ofproto_parser.OFPActionOutput(msg.in_port, 0)]
+                #     self.add_flow(datapath, match, actions)
                 
                 #Send IPv4 Packet
                 pkt.add_protocol(eth_pkt)
@@ -383,6 +395,17 @@ class SimpleSwitch(app_manager.RyuApp):
                 datapath.send_msg(out)
                 self.logger.info("STALTHIKE EPITELOUS packet in %s %s %s %s in_port=%s", hex(dpid), hex(ethertype), src, dst, msg.in_port)
                 
+                if '192.168.1' not in dst_Ip and '192.168.2' not in dst_Ip:
+                    eth_pkt = ethernet.ethernet(dst = eth.src, src = left_switch_router_mac, ethertype = eth.ethertype)
+                    ipv4_pkt = ipv4.ipv4(dst=src_Ip, src=left_switch_router_ip, proto=ip_pkt.proto)
+                    if ipv4_pkt.proto == inet.IPPROTO_ICMP:
+                        icmp_pkt = icmp.icmp(type_=icmp.ICMP_DEST_UNREACH, code=icmp.ICMP_HOST_UNREACH_CODE, csum=0, data=icmp.dest_unreach(data_len=len(pkt.data), data=pkt.data))
+                    pkt.add_protocol(eth_pkt)
+                    pkt.add_protocol(ipv4_pkt)
+                    pkt.add_protocol(icmp_pkt)
+                    pkt.serialize()
+                    out = datapath.ofproto_parser.OFPPacketOut(datapath=datapath, buffer_id=ofproto.OFP_NO_BUFFER, in_port=datapath.ofproto.OFPP_CONTROLLER, actions=actions, data=pkt.data)
+                    datapath.send_msg(out)
 
                 return
             
